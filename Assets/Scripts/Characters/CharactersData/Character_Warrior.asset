@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f546a5b42f77c649853772fb06a40a0, type: 3}
+  m_Name: Character_Warrior
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  Name: Warrior
+  Description: 
+  AnimatorController: {fileID: 0}
+  MaxHealth: 100
+  RegenerationHealth: 0
+  Armor: 0
+  MoveSpeed: 5
+  Might: 0
+  Area: 0
+  AttackSpeed: 0
+  Duration: 0
+  Amount: 0
+  Cooldawn: 0
+  Luck: 0
+  Growth: 0
+  Greed: 0
+  Curse: 0
+  Magnet: 0
+  Revival: 0
+  Reroll: 0
+  Skip: 0
+  Banish: 0

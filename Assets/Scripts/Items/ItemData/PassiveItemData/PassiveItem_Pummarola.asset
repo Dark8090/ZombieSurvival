@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1325d41ad1b4f34b86d20010a4aa09f, type: 3}
+  m_Name: PassiveItem_Pummarola
+  m_EditorClassIdentifier: Assembly-CSharp::PassiveItemData
+  ID: 4
+  Name: Pummarola
+  Description: RegenHP
+  Sprite: {fileID: -4885878364636539697, guid: c537d85364d1a724e9d3f69cad5f6af1, type: 3}
+  ItemPrefab: {fileID: 0}
+  ItemType: 0
+  xdxdxdxdxd: 
+  MaxHealth: 0
+  RegenerationHealth: 0.2
+  Armor: 0
+  MoveSpeed: 0

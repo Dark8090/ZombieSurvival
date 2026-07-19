@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Arch.System.SourceGenerator</id>
+    <version>2.1.0</version>
+    <title>Arch.System.SourceGenerator</title>
+    <authors>genaray</authors>
+    <license type="expression">Apache-2.0</license>
+    <licenseUrl>https://licenses.nuget.org/Apache-2.0</licenseUrl>
+    <projectUrl>https://github.com/genaray/Arch.Extended</projectUrl>
+    <description>A source generator for arch.system.</description>
+    <releaseNotes>Updated to fit Arch 2.1.0-beta and upwards.</releaseNotes>
+    <copyright>Apache2.0</copyright>
+    <tags>c# .net .net6 .net7 ecs game entity gamedev game-development game-engine entity-component-system arch</tags>
+    <repository type="git" url="https://github.com/genaray/Arch.Extended.git" commit="3a65aa6b9d1758ce7261886190675eae56abeced" />
+    <dependencies>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Microsoft.CodeAnalysis.CSharp.Workspaces" version="4.1.0" include="Runtime,Compile,Build,Native,ContentFiles,BuildTransitive" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

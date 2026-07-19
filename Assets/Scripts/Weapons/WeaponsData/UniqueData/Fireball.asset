@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 690a29b93ad4f324bb0cfc98bba7e121, type: 3}
+  m_Name: Fireball
+  m_EditorClassIdentifier: Assembly-CSharp::UniqueWeaponData
+  ID: 3
+  WeaponName: Fireball
+  Description: 
+  Sprite: {fileID: 0}
+  WeaponPrefab: {fileID: 1001653250779096693, guid: d05ffbdb892460c479b517413443eaf5, type: 3}
+  WeaponType: 0
+  BaseDamage: 100
+  FireRate: 3
+  ReloadTime: 0
+  CriticalChance: 0
+  CriticalMultiplier: 0
+  AttackSound: {fileID: 0}
+  HitSound: {fileID: 0}
+  ReloadSound: {fileID: 0}
+  ParticleSystem: {fileID: 0}
+  bulletPrefab: {fileID: 1001653250779096693, guid: d05ffbdb892460c479b517413443eaf5, type: 3}

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36286c8ede26c6140a8f5086f8e82983, type: 3}
+  m_Name: Potion
+  m_EditorClassIdentifier: Assembly-CSharp::RangedWeaponData
+  ID: 0
+  WeaponName: Potion
+  Description: Acid...
+  Sprite: {fileID: 0}
+  WeaponPrefab: {fileID: 0}
+  WeaponType: 0
+  BaseDamage: 5
+  FireRate: 0.2
+  ReloadTime: 0
+  CriticalChance: 0
+  CriticalMultiplier: 0
+  AttackSound: {fileID: 0}
+  HitSound: {fileID: 0}
+  ReloadSound: {fileID: 0}
+  ParticleSystem: {fileID: 0}
+  AttackRange: 5
+  RadiousZone: 1.5
+  ZoneDuration: 6
+  BulletPrefab: {fileID: 5082590368501946774, guid: 2df1f56ec77e84e4880d2f169bcf1a1c, type: 3}
