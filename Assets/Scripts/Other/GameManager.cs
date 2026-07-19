@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private Sprite spriteEnemy;
 
-    private float testst;
+    public Transform Player { get => player;  }
 
     public PlayerStats PlayerStats => playerStats;
     public CharacterBase CharacterBase { get => _characterBase; set => value = _characterBase; }
@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
 
         systems.Initialize(); // инициализируем группу систем
 
-        for (int i = 0; i < 150; i++)
+        for (int i = 0; i < 200; i++)
         {
             SpawnEnemy($"Enemy_{i}", Random.insideUnitCircle * 5f);
         }
@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
         systems.Update(Time.deltaTime); // запускаем все системы в группе
         var countEntites = new QueryDescription().WithAll<TransformRef>();
 
-        print(World.CountEntities(countEntites));
+        //print(World.CountEntities(countEntites));
     }
 
     private void SpawnEnemy(string name, Vector2 startPos)
@@ -74,17 +74,21 @@ public class GameManager : MonoBehaviour
 
         var rb = go.AddComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
+        rb.freezeRotation = true;
 
-        var collider = go.AddComponent<CircleCollider2D>();
-        collider.isTrigger = true;
+        //var triggerCollider = go.AddComponent<CircleCollider2D>();
+        //triggerCollider.isTrigger = true;
+        //triggerCollider.radius = 0.6f;
 
+        var physicCollider = go.AddComponent<CircleCollider2D>();
+        
 
-        var spriteRendere = go.AddComponent<SpriteRenderer>();
-        spriteRendere.sprite = spriteEnemy;
+        var spriteRenderer = go.AddComponent<SpriteRenderer>();
+        spriteRenderer.sprite = spriteEnemy;
 
 
         Vector2 randomDirection = Random.insideUnitCircle.normalized;
-        float randomSpeed = Random.Range(2f, 5f);
+        float randomSpeed = Random.Range(1f, 3f);
 
 
         var entity = World.Create(
@@ -93,6 +97,7 @@ public class GameManager : MonoBehaviour
             new Rigidbody2DRef { Value = rb },
             new TransformRef { Value = go.transform },
             new GameObjectRef { Value = go },
+            new SpriteRendererRef { Value = spriteRenderer },
             new Health { CurrentHP = 100, MaxHealth = 100 },
             new EnemyTag());
 

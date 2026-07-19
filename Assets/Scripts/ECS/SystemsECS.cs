@@ -16,19 +16,33 @@ public partial class MovementSystem : BaseSystem<World, float>
     public MovementSystem(World world) : base(world) { }
 
     [Query]
-    [All(typeof(Velocity), typeof(TransformRef), typeof(Rigidbody2DRef), typeof(EnemyTag))] // это вообще что то с чем то (непон)
+    [All(typeof(Velocity), typeof(TransformRef), typeof(Rigidbody2DRef), typeof(SpriteRendererRef), typeof(EnemyTag))] // это вообще что то с чем то (непон)
     //[Any(typeof(EnemyTag), typeof(PlayerTag))] // либо такой аттрибут
-    public void MovementEnemy([Data] in float deltaTime, ref Velocity velocity, ref TransformRef transformRef, ref Rigidbody2DRef rigidbody2DRef)
+    public void MovementEnemy([Data] in float deltaTime, ref Velocity velocity, ref TransformRef transformRef, ref Rigidbody2DRef rigidbody2DRef, ref SpriteRendererRef spriteRendererRef)
     {
-        Debug.Log("Я  бегаю");
+        Vector3 direction = (GameManager.Instance.Player.transform.position - transformRef.Value.position).normalized;
 
-        if (Random.value < 0.01f)
+        rigidbody2DRef.Value.linearVelocity = direction * velocity.Speed; // применяем скорость к RigidBody2D
+        transformRef.Value.position = rigidbody2DRef.Value.position; // обновляем трансформ
+
+        if (GameManager.Instance.Player.transform.position.x < transformRef.Value.position.x)
         {
-            velocity.Direction = Random.insideUnitCircle.normalized;
+            spriteRendererRef.Value.flipX = false;
+        }
+        else if (GameManager.Instance.Player.transform.position.x > transformRef.Value.position.x)
+        {
+            spriteRendererRef.Value.flipX = true;
         }
 
-        rigidbody2DRef.Value.linearVelocity = velocity.Direction * velocity.Speed; // применяем скорость к RigidBody2D
-        transformRef.Value.position = rigidbody2DRef.Value.position; // обновляем трансформ
+
+
+
+        //if (Random.value < 0.01f)
+        //{
+        //    velocity.Direction = Random.insideUnitCircle.normalized;
+        //}
+
+
     }
 }
 
@@ -36,18 +50,24 @@ public partial class KillSystem : BaseSystem<World, float>
 {
     public KillSystem(World world) : base(world) { }
 
+    public override void Initialize()
+    {
+        base.Initialize();
+    }
+
 
     [Query]
     //[All(typeof(GameObjectRef), typeof(Health))]
-    public void Kill(ref GameObjectRef goRef, ref Health health, Entity entity)
+    public void Kill(ref GameObjectRef goRef, ref Health health, Entity entity) //TODO: добавить компонент Transform и проверять дистанцию через него
     {
-        Debug.Log("Я работаю");
+
+        //float distance = Vector2.Distance(GameManager.Instance.Player.transform.positon, goRef.Value.transform.position);
+
+
         if (health.CurrentHP <= 0f)
         {
             if (goRef.Value != null)
             {
-                Debug.Log("Я убил!");
-
                 GameManager.Instance.UnregisterEntity(goRef.Value);
                 Object.Destroy(goRef.Value);
             }
@@ -56,5 +76,7 @@ public partial class KillSystem : BaseSystem<World, float>
         }
     }
 }
+
+
 
 
