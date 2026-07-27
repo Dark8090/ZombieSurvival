@@ -43,12 +43,12 @@ public struct SpriteRendererRef
 public struct PlayerTag { }
 public struct EnemyTag
 {
-    public EnemyType EnemyType;
+    public EnemyData enemyData;
 }
 
 
 public enum EnemyType
 {
-    Common,
+    Melee,
     Ranged
 }

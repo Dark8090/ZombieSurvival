@@ -2,6 +2,7 @@ using Arch.Core;
 using Arch.Core.Extensions;
 using Arch.System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -12,10 +13,25 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private CharacterBase _characterBase;
     [SerializeField] private PlayerStats playerStats;
-    [SerializeField] private Transform player;
+    [SerializeField] private GameObject PlayerObject;
     [SerializeField] private Sprite spriteEnemy;
+    [SerializeField] private List<EnemyData> EnemyDatas;
 
-    public Transform Player { get => player;  }
+    public Transform PlayerTransform
+    {
+        get
+        {
+            if (PlayerObject != null)
+            {
+                return PlayerObject.transform;
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+    public GameObject PlayerGameObject { get => PlayerObject; }
 
     public PlayerStats PlayerStats => playerStats;
     public CharacterBase CharacterBase { get => _characterBase; set => value = _characterBase; }
@@ -42,7 +58,7 @@ public class GameManager : MonoBehaviour
         //World.Add(player, new Health(), new Position()); // Пример добавления компонентов на сущность
         //player.Remove<Health, Position>(); // Пример удаления компонентов с сущности
 
-        
+
         systems = new Group<float>( // создаем группу систем
             "GameSystems",
             new MovementSystem(World),
@@ -50,7 +66,7 @@ public class GameManager : MonoBehaviour
 
         systems.Initialize(); // инициализируем группу систем
 
-        for (int i = 0; i < 200; i++)
+        for (int i = 0; i < 1; i++)
         {
             SpawnEnemy($"Enemy_{i}", Random.insideUnitCircle * 5f);
         }
@@ -81,7 +97,7 @@ public class GameManager : MonoBehaviour
         //triggerCollider.radius = 0.6f;
 
         var physicCollider = go.AddComponent<CircleCollider2D>();
-        
+
 
         var spriteRenderer = go.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = spriteEnemy;
@@ -97,12 +113,18 @@ public class GameManager : MonoBehaviour
             new Rigidbody2DRef { Value = rb },
             new TransformRef { Value = go.transform },
             new GameObjectRef { Value = go },
-            new SpriteRendererRef { Value = spriteRenderer },
-            new Health { CurrentHP = 100, MaxHealth = 100 },
-            new EnemyTag());
+            new EnemyTag { enemyData = EnemyDatas[0] },
+            new SpriteRendererRef(),
+            new Health { CurrentHP = 100, MaxHealth = 100 });
 
-        RegisterEntity(entity, go); 
+        var sprite = World.Get<SpriteRendererRef>(entity);
+        //var enemyData = World.Get<EnemyTag>(entity);
+        sprite.Value = EnemyDatas[0].Sprites[0];
+        print(sprite.Value.sprite);
+        RegisterEntity(entity, go);
     }
+
+
 
     public void RegisterEntity(Entity entity, GameObject gameObject)
     {

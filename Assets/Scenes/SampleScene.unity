@@ -4693,8 +4693,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   _characterBase: {fileID: 1478951707}
   playerStats: {fileID: 1478951709}
-  player: {fileID: 1478951704}
+  PlayerObject: {fileID: 1478951700}
   spriteEnemy: {fileID: 21300000, guid: 88758486834ddd5439afe59c692789aa, type: 3}
+  EnemyDatas:
+  - {fileID: 11400000, guid: 70e4a8689ef3e624ab991aa2c4dc7317, type: 2}
 --- !u!4 &1439799654
 Transform:
   m_ObjectHideFlags: 0
@@ -5027,6 +5029,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
   characterBase: {fileID: 0}
   MaxHealth: 0
+  CurrentHealth: 0
   RegenerationHealth: 0
   Armor: 0
   MoveSpeed: 0

@@ -8,6 +8,7 @@ public class PlayerStats : MonoBehaviour
 
     [Header("Stats")]
     [SerializeField] private float MaxHealth;
+    [SerializeField] private float CurrentHealth;
     [SerializeField] private float RegenerationHealth;
     [SerializeField] private float Armor;
     [SerializeField] private float MoveSpeed;
@@ -27,8 +28,19 @@ public class PlayerStats : MonoBehaviour
     //public float Skip;
     //public float Banish;
 
+    public float CurrentHealthPlayer
+    {
+        get
+        {
+            return CurrentHealth;
+        }
+        set
+        {
+            CurrentHealth = value;
+            //UIManager.Instance.UpdateHealthSlider(CurrentHealth, MaxHealth); //TODO: Реализовать отображение игрока и изменять его
+        }
+    }
 
-    private float currentHealth;
 
     private int currentExperience = 0;
     public int maxExperience = 100;
@@ -42,11 +54,11 @@ public class PlayerStats : MonoBehaviour
     {
         characterBase = GetComponent<CharacterBase>();
         MaxHealth = characterBase.CharacterData.MaxHealth;
+        CurrentHealth = MaxHealth;
         RegenerationHealth = characterBase.CharacterData.RegenerationHealth;
         Armor = characterBase.CharacterData.Armor;
         MoveSpeed = characterBase.CharacterData.MoveSpeed;
 
-        currentHealth = MaxHealth;
 
         UIManager.Instance.UpdateSlider(currentExperience, maxExperience, currentLevel);
     }
@@ -54,10 +66,10 @@ public class PlayerStats : MonoBehaviour
     private void Update()
     {
 
-        if (currentHealth < MaxHealth)
+        if (CurrentHealth < MaxHealth)
         {
-            currentHealth += RegenerationHealth * Time.deltaTime;
-            currentHealth = Mathf.Min(currentHealth, MaxHealth);
+            CurrentHealth += RegenerationHealth * Time.deltaTime;
+            CurrentHealth = Mathf.Min(CurrentHealth, MaxHealth);
         }
 
 
@@ -70,13 +82,13 @@ public class PlayerStats : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            currentHealth -= value;
+            CurrentHealth -= value;
         }
     }
 
     public void Heal(float amount)
     {
-        currentHealth = Mathf.Min(MaxHealth, currentHealth + amount);
+        CurrentHealth = Mathf.Min(MaxHealth, CurrentHealth + amount);
     }
     public void RecalculateStats()
     {
@@ -90,7 +102,7 @@ public class PlayerStats : MonoBehaviour
         }
 
 
-        currentHealth = Mathf.Min(currentHealth, MaxHealth);
+        CurrentHealth = Mathf.Min(CurrentHealth, MaxHealth);
     }
 
     public void AddExperience(int count)
