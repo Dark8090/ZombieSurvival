@@ -17,7 +17,6 @@ public class Potion : RangedWeapon
     {
         // 1. Ищем врагов в радиусе 
         Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, rangedWeaponData.AttackRange, targetLayer);
-
         if (enemies.Length == 0) return;
 
         // 2. Выбираем случайного врага
@@ -54,7 +53,7 @@ public class Potion : RangedWeapon
     private new void TryAttack()
     {
         Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, rangedWeaponData.AttackRange, targetLayer);
-
+        print(enemies.Length);
         if (enemies.Length > 0 && Time.time >= NextFireTime)
         {
             print("Атакую");

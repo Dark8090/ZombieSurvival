@@ -18,6 +18,8 @@ MonoBehaviour:
   Sprite: {fileID: -3649581771365044444, guid: 892c23f491a273d4bb9f71a1c9ccfd40, type: 3}
   WeaponPrefab: {fileID: 0}
   WeaponType: 0
+  Level: 1
+  MaxLevel: 5
   BaseDamage: 9.8
   FireRate: 5
   ReloadTime: 0
@@ -28,4 +30,6 @@ MonoBehaviour:
   ReloadSound: {fileID: 0}
   ParticleSystem: {fileID: 0}
   AttackRange: 5
+  RadiousZone: 0
+  ZoneDuration: 0
   BulletPrefab: {fileID: 3277302196279923195, guid: bf19bb714117bfa43a188437902919de, type: 3}

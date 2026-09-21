@@ -27,6 +27,23 @@ public class CharacterBase : MonoBehaviour
         rb.linearVelocity = new Vector2(inputX, inputY) * characterData.MoveSpeed;
 
     }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("PickupItem"))
+        {
+            PickupItem pickupItem = collision.GetComponent<PickupItem>();
+            if (pickupItem != null)
+            {
+                if (pickupItem is ItemGem itemGem)
+                {
+                    itemGem.SetTarget(transform);
+                }
+            }
+        }
+    }
+
+
+
 
     //public void AddPassiveItem(PassiveItem passiveItem)
     //{

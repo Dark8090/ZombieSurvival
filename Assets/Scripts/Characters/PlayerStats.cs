@@ -95,10 +95,11 @@ public class PlayerStats : MonoBehaviour
         foreach (var item in InventorySystem.Instance.PassiveItemsList)
         {
             if (item == null) continue;
-            MaxHealth += item.GetMaxHealthBonus();
-            RegenerationHealth += item.GetRegenerationHealthBonus();
-            Armor += item.GetArmorBonus();
-            MoveSpeed += item.GetMoveSpeedBonus();
+            MaxHealth = item.GetMaxHealthBonus();
+            RegenerationHealth = item.GetRegenerationHealthBonus();
+            Debug.Log(item.GetRegenerationHealthBonus());
+            Armor = item.GetArmorBonus();
+            MoveSpeed = item.GetMoveSpeedBonus();
         }
 
 
@@ -118,11 +119,17 @@ public class PlayerStats : MonoBehaviour
                 currentLevel += 1;
                 currentExperience = 0;
                 maxExperience += 50;
+                LevelUp();
             }
         }
         UIManager.Instance.UpdateSlider(currentExperience, maxExperience, currentLevel);
         
         
 
+    }
+
+    private void LevelUp()
+    {
+        GameManager.Instance.LevelUpBox.transform.GetChild(0).gameObject.SetActive(true);
     }
 }

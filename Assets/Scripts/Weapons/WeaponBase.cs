@@ -2,8 +2,9 @@ using UnityEngine;
 
 public abstract class WeaponBase : MonoBehaviour
 {
-    public WeaponData WeaponData;
-
+    public WeaponData WeaponData; //TODO: —тоил ли тут добавить общий Level дл€ всех оружий?
+    private int levelBase;
+    public int Level { get => levelBase; set => levelBase = value; }
     public virtual void Attack() { }
     public virtual void Attack(Vector3 positon) { }
     public virtual float GetDamage()
@@ -11,5 +12,10 @@ public abstract class WeaponBase : MonoBehaviour
         bool isCritical = Random.value < (WeaponData.CriticalChance / 100f); // ¬ инспекторе указываем % CriticalChance, например 20% будет = Random.value(от 0 до 1) < 0.2
         float multiplier = isCritical ? WeaponData.CriticalMultiplier : 1f;
         return WeaponData.BaseDamage * multiplier;
+    }
+
+    protected virtual void Start()
+    {
+        levelBase = WeaponData.Level;
     }
 }

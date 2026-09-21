@@ -7,7 +7,7 @@ public class EnemyData : ScriptableObject
 {
     [Header("General")]
     public EnemyType EnemyType;
-    public List<SpriteRenderer> Sprites;
+    public List<Sprite> Sprites;
 
     [Header("AttackSettings")]
     public float Damage;

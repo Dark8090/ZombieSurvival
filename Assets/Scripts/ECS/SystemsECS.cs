@@ -14,14 +14,19 @@ using UnityEngine.UIElements;
 
 public partial class MovementSystem : BaseSystem<World, float>
 {
+
     public MovementSystem(World world) : base(world) { }
+
 
     [Query]
     [All(typeof(Velocity), typeof(TransformRef), typeof(Rigidbody2DRef), typeof(SpriteRendererRef), typeof(EnemyTag))] // это вообще что то с чем то (непон)
     //[Any(typeof(EnemyTag), typeof(PlayerTag))] // либо такой аттрибут
-    public void MovementEnemy([Data] in float deltaTime, ref Velocity velocity, ref TransformRef transformRef, ref Rigidbody2DRef rigidbody2DRef, ref SpriteRendererRef spriteRendererRef, ref EnemyTag enemyTag)
+    public void MovementEnemy([Data] in float deltaTime, ref Velocity velocity, ref TransformRef transformRef, ref Rigidbody2DRef rigidbody2DRef,
+        ref SpriteRendererRef spriteRendererRef, ref EnemyTag enemyTag, ref AnimationState animationState)
     {
+        float randomValue = Random.Range(0.15f, 1f);
 
+        var enemyData = enemyTag.enemyData;
         float distance = Vector2.Distance(GameManager.Instance.PlayerTransform.position, transformRef.Value.position);
 
         if (distance > enemyTag.enemyData.StoppingDistance)
@@ -29,6 +34,8 @@ public partial class MovementSystem : BaseSystem<World, float>
             Vector2 direction = (GameManager.Instance.PlayerTransform.position - transformRef.Value.position).normalized;
             rigidbody2DRef.Value.linearVelocity = direction * velocity.Speed; // применяем скорость к RigidBody2D
             transformRef.Value.position = rigidbody2DRef.Value.position; // обновляем трансформ
+
+
         }
         else
         {
@@ -37,40 +44,55 @@ public partial class MovementSystem : BaseSystem<World, float>
 
 
 
-        if (GameManager.Instance.PlayerTransform.position.x < transformRef.Value.position.x)
+        if (GameManager.Instance.PlayerTransform.position.x < transformRef.Value.position.x && spriteRendererRef.Value != null)
         {
-            if (spriteRendererRef.Value == null)
-            {
-                Debug.Log("null");
-            }
-            else
-            {
-                spriteRendererRef.Value.flipX = false;
-            }
+            spriteRendererRef.Value.flipX = true;
         }
-        else if (GameManager.Instance.PlayerTransform.position.x > transformRef.Value.position.x)
+        else if (GameManager.Instance.PlayerTransform.position.x > transformRef.Value.position.x && spriteRendererRef.Value != null)
         {
-            if (spriteRendererRef.Value == null)
-            {
-                Debug.Log("null");
-            }
-            else
-            {
-                spriteRendererRef.Value.flipX = true;
-            }
+            spriteRendererRef.Value.flipX = false;
         }
 
 
+        if (enemyData != null)
+        {
+            animationState.Timer += deltaTime;
+            //float timePerFrame = 0.15f;
+
+            if (animationState.Timer >= randomValue)
+            {
+                animationState.Timer -= randomValue;
+                animationState.FrameIndex++;
 
 
-        //if (Random.value < 0.01f)
-        //{
-        //    velocity.Direction = Random.insideUnitCircle.normalized;
-        //}
+                if (animationState.FrameIndex >= enemyData.Sprites.Count)
+                {
+                    animationState.FrameIndex = 0;
+                }
+
+                if (distance > enemyTag.enemyData.StoppingDistance)
+                {
+                    spriteRendererRef.Value.sprite = enemyData.Sprites[animationState.FrameIndex];
+                }
+
+            }
+        }
 
 
     }
 }
+
+//public partial class  SpriteAnimationSystem : BaseSystem<World, float> 
+//{
+//    public SpriteAnimationSystem(World world) : base(world) { }
+
+//    [Query]
+//    public void AnimationSprite
+//    {
+
+//    }
+
+//}
 
 public partial class KillSystem : BaseSystem<World, float>
 {
@@ -89,6 +111,8 @@ public partial class KillSystem : BaseSystem<World, float>
     {
         float distance = Vector2.Distance(GameManager.Instance.PlayerTransform.position, transformRef.Value.position);
 
+
+        // Нанесение урона игроку
         if (distance < enemyTag.enemyData.AttackRange)
         {
             if (timer >= enemyTag.enemyData.AttackDelay)
@@ -97,9 +121,9 @@ public partial class KillSystem : BaseSystem<World, float>
                 Debug.Log(GameManager.Instance.PlayerStats.CurrentHealthPlayer);
                 timer = 0f;
 
-                if (GameManager.Instance.PlayerStats.CurrentHealthPlayer <= 0)
+                if (GameManager.Instance.PlayerStats.CurrentHealthPlayer <= 0) //TODO: Реализовать смерть игрока
                 {
-                    //Object.Destroy(GameManager.Instance.PlayerGameObject); //TODO: Реализовать смерть игрока
+                    //Object.Destroy(GameManager.Instance.PlayerGameObject); 
 
                 }
 
@@ -110,18 +134,19 @@ public partial class KillSystem : BaseSystem<World, float>
             }
 
         }
-        else
-        {
-            timer = float.MaxValue;
-        }
-        
-        
-        
+        //else //TODO: Посмотреть 
+        //{
+        //    timer = float.MaxValue;
+        //}
+
+
+        // Смерть врага
 
         if (health.CurrentHP <= 0f)
         {
             if (goRef.Value != null)
             {
+                GameObject.Instantiate(GameManager.Instance.GreenGemObject, transformRef.Value.position, Quaternion.identity);
                 GameManager.Instance.UnregisterEntity(goRef.Value);
                 Object.Destroy(goRef.Value);
             }

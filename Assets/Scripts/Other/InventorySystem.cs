@@ -33,10 +33,10 @@ public class InventorySystem : MonoBehaviour
                 item.GetComponent<Slot>().SetSlot(weaponBase.WeaponData.Sprite);
                 item.GetComponent<Slot>().isEmpty = false;
                 weaponsList.Add(weaponBase);
-                print("������� weapon");
+                print("Dobavil weapon");
                 return;
             }
-            else print("�� ������� �������� �������");
+            //else print($"Slot {item} zanyat");
         }
     }
     public bool CanAddPassiveItem(PassiveItem passiveItem)
@@ -67,12 +67,30 @@ public class InventorySystem : MonoBehaviour
                 item.GetComponent<Slot>().isEmpty = false;
                 passiveItemsList.Add(passiveItem);
                 character.PlayerStats.RecalculateStats();
-                print("������� passiveItem");
+                print("Dobavil passiveItem");
                 return;
             }
-            else print("�� ������� �������� �������");
+            //else print($"Slot {item} zanyat" );
         }
     }
+
+    public bool CanUpgradeWeaponItem(WeaponBase weapon)
+    {
+        foreach (var item in weaponsList)
+        {
+            if (item.WeaponData.ID == weapon.WeaponData.ID) return true;
+        }
+        return false;
+    }
+    public bool CanUpgradePassiveItem(PassiveItem passiveItem)
+    {
+        foreach (var item in passiveItemsList)
+        {
+            if (item.PassiveItemData.ID == passiveItem.PassiveItemData.ID) return true;
+        }
+        return false;
+    }
+
     public void RemoveWeaponItem(WeaponBase weaponBase)
     {
         weaponsList.Remove(weaponBase);
@@ -81,5 +99,5 @@ public class InventorySystem : MonoBehaviour
     {
         passiveItemsList.Remove(passiveItem);
     }
-
+    
 }

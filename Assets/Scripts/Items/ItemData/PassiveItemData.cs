@@ -4,6 +4,8 @@ using UnityEngine;
 public class PassiveItemData : ItemData
 {
     [Header("Settings Passive Item ")]
+    public int Level;
+    public int MaxLevel;
     [Tooltip("Макс хп")]
     public float MaxHealth;
     [Tooltip("Регенерация хп")]

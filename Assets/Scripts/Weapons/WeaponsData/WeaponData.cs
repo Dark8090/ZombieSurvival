@@ -12,6 +12,8 @@ public class WeaponData : ScriptableObject
     public WeaponType WeaponType;
 
     [Header("Parametres")]
+    public int Level = 1;
+    public int MaxLevel = 5;
     public float BaseDamage; // базовый дамаг
     [Min(0.1f)] public float FireRate; // скорость атаки (выстрелы в секунду)
     public float ReloadTime;

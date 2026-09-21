@@ -57,13 +57,14 @@ public class LevelUpSystem : MonoBehaviour
                     levelUpItem.SetItemImage(passiveItem.PassiveItemData.Sprite);
                 }
 
-               
-                levelUpItem.SetEventItemButton(() => CreateObject(prefabsAllItems[randomObject]));
+                levelUpItem.ClearEventItemButton();
+                levelUpItem.AddEventItemButton(() => UpgradeObject(prefabsAllItems[randomObject]));
+                levelUpItem.AddEventItemButton(() => CreateObject(prefabsAllItems[randomObject]));
+                levelUpItem.AddEventItemButton(() => transform.GetChild(0).gameObject.SetActive(false));
+
                 gameObjects.Add(prefabsAllItems[randomObject]);
                 break;
             }
-
-            print(count);
         }
     }
     
@@ -71,5 +72,9 @@ public class LevelUpSystem : MonoBehaviour
     private void CreateObject(GameObject gameObject)
     {
         UIManager.Instance.CreateObject(gameObject);
+    }
+    private void UpgradeObject(GameObject gameObject)
+    {
+        UIManager.Instance.UpgradeObject(gameObject);
     }
 }

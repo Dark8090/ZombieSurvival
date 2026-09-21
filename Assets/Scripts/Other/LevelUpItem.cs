@@ -22,9 +22,12 @@ public class LevelUpItem : MonoBehaviour
     {
         itemText.text = text;
     }
-    public void SetEventItemButton(UnityAction newEvent)
+    public void ClearEventItemButton()
     {
         itemButton.onClick.RemoveAllListeners();
+    }
+    public void AddEventItemButton(UnityAction newEvent)
+    {
         itemButton.onClick.AddListener(newEvent.Invoke);
     }
 }

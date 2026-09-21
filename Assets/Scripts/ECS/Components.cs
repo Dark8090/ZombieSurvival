@@ -37,6 +37,12 @@ public struct GameObjectRef
 public struct SpriteRendererRef
 {
     public SpriteRenderer Value;
+    public float timer;
+}
+public struct AnimationState
+{
+    public float Timer;
+    public int FrameIndex;
 }
 
 // Теги

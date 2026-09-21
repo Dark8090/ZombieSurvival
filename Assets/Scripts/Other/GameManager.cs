@@ -13,17 +13,21 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private CharacterBase _characterBase;
     [SerializeField] private PlayerStats playerStats;
-    [SerializeField] private GameObject PlayerObject;
+    [SerializeField] private GameObject playerObject;
+    [SerializeField] private GameObject greenGemPrefab;
     [SerializeField] private Sprite spriteEnemy;
     [SerializeField] private List<EnemyData> EnemyDatas;
+    [SerializeField] private GameObject levelUpBox;
+    [SerializeField] private GameObject weaponItemBox;
+    [SerializeField] private GameObject passiveItemBox;
 
     public Transform PlayerTransform
     {
         get
         {
-            if (PlayerObject != null)
+            if (playerObject != null)
             {
-                return PlayerObject.transform;
+                return playerObject.transform;
             }
             else
             {
@@ -31,7 +35,11 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    public GameObject PlayerGameObject { get => PlayerObject; }
+    public GameObject PlayerGameObject { get => playerObject; }
+    public GameObject GreenGemObject { get => greenGemPrefab; }
+    public GameObject LevelUpBox { get => levelUpBox; }
+    public GameObject PassiveItemBox { get => passiveItemBox; }
+    public GameObject WeaponItemBox { get => weaponItemBox; }
 
     public PlayerStats PlayerStats => playerStats;
     public CharacterBase CharacterBase { get => _characterBase; set => value = _characterBase; }
@@ -58,6 +66,7 @@ public class GameManager : MonoBehaviour
         //World.Add(player, new Health(), new Position()); // Пример добавления компонентов на сущность
         //player.Remove<Health, Position>(); // Пример удаления компонентов с сущности
 
+        //LevelUp();
 
         systems = new Group<float>( // создаем группу систем
             "GameSystems",
@@ -66,7 +75,7 @@ public class GameManager : MonoBehaviour
 
         systems.Initialize(); // инициализируем группу систем
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 3; i++)
         {
             SpawnEnemy($"Enemy_{i}", Random.insideUnitCircle * 5f);
         }
@@ -82,11 +91,17 @@ public class GameManager : MonoBehaviour
         //print(World.CountEntities(countEntites));
     }
 
+
+    private void LevelUp()
+    {
+        LevelUpBox.SetActive(true);
+    }
     private void SpawnEnemy(string name, Vector2 startPos)
     {
         var go = new GameObject();
         go.name = name;
         go.transform.position = startPos;
+        go.layer = 3;
 
         var rb = go.AddComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
@@ -100,7 +115,7 @@ public class GameManager : MonoBehaviour
 
 
         var spriteRenderer = go.AddComponent<SpriteRenderer>();
-        spriteRenderer.sprite = spriteEnemy;
+        //spriteRenderer.sprite = spriteEnemy;
 
 
         Vector2 randomDirection = Random.insideUnitCircle.normalized;
@@ -114,13 +129,14 @@ public class GameManager : MonoBehaviour
             new TransformRef { Value = go.transform },
             new GameObjectRef { Value = go },
             new EnemyTag { enemyData = EnemyDatas[0] },
-            new SpriteRendererRef(),
+            new SpriteRendererRef { Value = spriteRenderer},
+            new AnimationState { Timer = 0f, FrameIndex = 0},
             new Health { CurrentHP = 100, MaxHealth = 100 });
 
-        var sprite = World.Get<SpriteRendererRef>(entity);
+        //var sprite = World.Get<SpriteRendererRef>(entity);
+        //spriteRenderer.sprite = EnemyDatas[0].Sprites[0];
+
         //var enemyData = World.Get<EnemyTag>(entity);
-        sprite.Value = EnemyDatas[0].Sprites[0];
-        print(sprite.Value.sprite);
         RegisterEntity(entity, go);
     }
 
@@ -148,5 +164,10 @@ public class GameManager : MonoBehaviour
     }
 
 
+    ///
 
+    public void AddExperience(int experience)
+    {
+        playerStats.AddExperience(experience);
+    }
 }

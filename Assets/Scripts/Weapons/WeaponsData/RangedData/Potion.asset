@@ -18,6 +18,8 @@ MonoBehaviour:
   Sprite: {fileID: 0}
   WeaponPrefab: {fileID: 0}
   WeaponType: 0
+  Level: 1
+  MaxLevel: 5
   BaseDamage: 5
   FireRate: 0.2
   ReloadTime: 0

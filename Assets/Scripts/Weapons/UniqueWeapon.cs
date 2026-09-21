@@ -6,11 +6,15 @@ public class UniqueWeapon : WeaponBase
     private MouseFollow mouseFollow;
     private CharacterBase characterBase;
     private float nextFireTime = 0f;
+ 
 
-    private void Start()
+    protected override void Start()
     {
+        //base.Start();
         mouseFollow = GetComponentInParent<MouseFollow>();
         characterBase = GetComponentInParent<CharacterBase>();
+        
+
     }
     private void Update()
     {
@@ -34,4 +38,5 @@ public class UniqueWeapon : WeaponBase
 
         Destroy(bulletObj, 3f);
     }
+    
 }
