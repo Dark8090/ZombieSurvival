@@ -25,6 +25,9 @@ MonoBehaviour:
   ReloadTime: 0
   CriticalChance: 0
   CriticalMultiplier: 0
+  CanEvolution: 1
+  RequiredPassiveItemToEvolution: {fileID: 11400000, guid: a44c10f8d51795646ab21b3dfd1e19e4, type: 2}
+  EvolutionWeapon: {fileID: 11400000, guid: 68fd6dd514f0aba48a5b6c1e29fca660, type: 2}
   AttackSound: {fileID: 0}
   HitSound: {fileID: 0}
   ReloadSound: {fileID: 0}

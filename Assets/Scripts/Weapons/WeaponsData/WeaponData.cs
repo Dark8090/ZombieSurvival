@@ -21,6 +21,13 @@ public class WeaponData : ScriptableObject
     public float CriticalMultiplier; // множитель крита (1.0f = x1 урон, 2.0f = x2 урон)
 
 
+    [Header("Evolution")] //TODO: Сделать так, чтобы в эволюционном предмете не было блока Evolution (разбить ScriptableObject на несколько)
+    public bool CanEvolution;
+    public PassiveItemData RequiredPassiveItemToEvolution;
+    public WeaponData EvolutionWeapon;
+
+
+
 
     [Header("Visualities")]
     public AudioClip AttackSound; // Звук выстрела/атаки

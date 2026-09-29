@@ -61,7 +61,7 @@ public class UIManager : MonoBehaviour
                 }
             }
         }
-        else if (gameObject.TryGetComponent(out PassiveItem passiveItem) && InventorySystem.Instance.CanUpgradePassiveItem(passiveItem)) //TODO: Реализовать систему улучшения оружия+предмета
+        else if (gameObject.TryGetComponent(out PassiveItem passiveItem) && InventorySystem.Instance.CanUpgradePassiveItem(passiveItem)) 
         {
             foreach (var item in InventorySystem.Instance.PassiveItemsList) //TODO: Добавить Level в PassiveItemData
             {
@@ -71,10 +71,10 @@ public class UIManager : MonoBehaviour
                     item.GetComponent<PassiveItem>().Level++;
                     GameManager.Instance.CharacterBase.PlayerStats.RecalculateStats();
                 }
-
-
             }
         }
+
+        
     }
 
 
@@ -88,5 +88,10 @@ public class UIManager : MonoBehaviour
     {
         moneySystem.AddMoney(count);
     }
+
+    //public void TestDestroy(WeaponBase weaponBase)
+    //{
+    //    InventorySystem.Instance.RemoveWeaponItem(weaponBase);
+    //}
 
 }

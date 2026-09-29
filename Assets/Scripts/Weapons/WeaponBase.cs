@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class WeaponBase : MonoBehaviour
 {
-    public WeaponData WeaponData; //TODO: —тоил ли тут добавить общий Level дл€ всех оружий?
+    public WeaponData WeaponData; 
     private int levelBase;
     public int Level { get => levelBase; set => levelBase = value; }
     public virtual void Attack() { }
