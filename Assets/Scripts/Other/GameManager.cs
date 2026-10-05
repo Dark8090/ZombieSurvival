@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour
 
         systems.Initialize(); // инициализируем группу систем
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 0; i++)
         {
             SpawnEnemy($"Enemy_{i}", Random.insideUnitCircle * 5f);
         }

@@ -17,6 +17,11 @@ public class LevelUpSystem : MonoBehaviour
 
     private void Start()
     {
+        LevelUp();
+    }
+    
+    public void LevelUp()
+    {
         gameObjects = new List<GameObject>(countButon);
 
         int count = 0;
@@ -67,8 +72,17 @@ public class LevelUpSystem : MonoBehaviour
             }
         }
     }
-    
-
+    private void CheckEvolution()
+    {
+        foreach (var item in InventorySystem.Instance.WeaponsList)
+        {
+            if (item.WeaponData.CanEvolution)
+            {
+                InventorySystem.Instance.CanWeaponEvolution(item);
+            }
+        }
+        
+    }
     private void CreateObject(GameObject gameObject)
     {
         UIManager.Instance.CreateObject(gameObject);

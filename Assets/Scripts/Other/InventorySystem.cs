@@ -16,10 +16,9 @@ public class InventorySystem : MonoBehaviour
     [SerializeField] private List<PassiveItem> passiveItemsList = new List<PassiveItem>();
     [SerializeField] private List<WeaponBase> weaponsList = new List<WeaponBase>();
 
-    [SerializeField] private List<Slot> weaponSlot = new List<Slot>();
-    [SerializeField] private List<Slot> itemsSlot = new List<Slot>();
+    [SerializeField] private List<Slot> weaponSlot;
+    [SerializeField] private List<Slot> itemsSlot;
 
-    private EvolutionItemSystem evolutionItemSystem = new EvolutionItemSystem();
     public List<PassiveItem> PassiveItemsList => passiveItemsList;
     public List<WeaponBase> WeaponsList => weaponsList;
     private WeaponBase weaponTemp = null;
@@ -33,7 +32,6 @@ public class InventorySystem : MonoBehaviour
     {
         foreach (var item in weaponSlot)
         {
-
             if (item.GetComponent<Slot>().isEmpty == true)
             {
                 item.GetComponent<Slot>().SetSlot(weaponBase.WeaponData.Sprite);
@@ -103,7 +101,9 @@ public class InventorySystem : MonoBehaviour
         weaponSlot[weaponIndex].ClearSlot();
         GameObject deleteObject = weaponBase.gameObject;
         weaponsList.Remove(weaponBase);
+        UpdateInventory();
         Destroy(deleteObject);
+        
     }
     public void RemovePassiveItem(PassiveItem passiveItem)
     {
@@ -111,6 +111,7 @@ public class InventorySystem : MonoBehaviour
         itemsSlot[passiveItemIndex].ClearSlot();
         GameObject deleteObject = passiveItem.gameObject;
         passiveItemsList.Remove(passiveItem);
+        UpdateInventory();
         Destroy(deleteObject);
     }
 
@@ -123,23 +124,63 @@ public class InventorySystem : MonoBehaviour
         return false;
     }
 
-    public void CanWeaponEvolution(WeaponBase weaponBase, PassiveItem requiredPassiveItem)
+
+    public void UpdateInventory()
     {
-        
-        foreach (var item in weaponsList)
+        // Удаление
+        foreach (var item in weaponSlot)
         {
-            if (item.WeaponData.ID != weaponBase.WeaponData.ID) return;
-            weaponTemp = item;
+            if (item != null)
+            {
+                item.ClearSlot();
+            }
         }
-        foreach (var item in passiveItemsList)
+        foreach (var item in itemsSlot)
         {
-            if (item.PassiveItemData.ID != requiredPassiveItem.PassiveItemData.ID) return;
-            requiredPassiveItemTemp = item;
+            if (item != null)
+            {
+                item.ClearSlot();
+            }
         }
 
-        evolutionItemSystem.EvolutionWeapon(weaponTemp, requiredPassiveItemTemp);
-        weaponTemp = null;
-        requiredPassiveItemTemp = null;
+
+
+        // Добавление
+        for (int i = 0; i < weaponSlot.Count; i++)
+        {
+            weaponSlot[i].SetSlot(weaponsList[i].WeaponData.Sprite);
+        }
+        for (int i = 0; i < itemsSlot.Count; i++)
+        {
+            itemsSlot[i].SetSlot(passiveItemsList[i].PassiveItemData.Sprite);
+        }
+    }
+
+    public void CanWeaponEvolution(WeaponBase weaponBase)
+    {
+        WeaponData weaponData = weaponBase.WeaponData;
+
+        if (!weaponData.CanEvolution || weaponData.RequiredPassiveItemToEvolution == null) // СПОРНЕНЬКО
+        {
+            return;
+        }
+
+        PassiveItem passiveInstanceInInventory = null;
+
+        foreach (var item in passiveItemsList)
+        {
+            if (item.PassiveItemData == weaponData.RequiredPassiveItemToEvolution)
+            {
+                passiveInstanceInInventory = item;
+                break;
+            }
+        }
+
+        if (passiveInstanceInInventory != null)
+        {
+            EvolutionItemSystem.Instance.EvolutionWeapon(weaponBase, passiveInstanceInInventory);
+        }
+
     }
 
 }

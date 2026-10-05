@@ -119,7 +119,9 @@ public class PlayerStats : MonoBehaviour
                 currentLevel += 1;
                 currentExperience = 0;
                 maxExperience += 50;
-                LevelUp();
+
+                //GameManager.Instance.LevelUpBox.GetComponent<LevelUpSystem>().LevelUp();
+                GameManager.Instance.LevelUpBox.transform.GetChild(0).gameObject.SetActive(true);
             }
         }
         UIManager.Instance.UpdateSlider(currentExperience, maxExperience, currentLevel);
@@ -128,8 +130,5 @@ public class PlayerStats : MonoBehaviour
 
     }
 
-    private void LevelUp()
-    {
-        GameManager.Instance.LevelUpBox.transform.GetChild(0).gameObject.SetActive(true);
-    }
+   
 }

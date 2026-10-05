@@ -10,9 +10,11 @@ public class Slot : MonoBehaviour
     public void SetSlot(Sprite sprite)
     {
         image.sprite = sprite;
+        isEmpty = true;
     }
     public void ClearSlot()
     {
         image.sprite = null;
+        isEmpty = false;
     }
 }
