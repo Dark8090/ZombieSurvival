@@ -18,8 +18,8 @@ MonoBehaviour:
   Sprite: {fileID: -7378535130703693053, guid: c537d85364d1a724e9d3f69cad5f6af1, type: 3}
   WeaponPrefab: {fileID: 1001653250779096693, guid: d05ffbdb892460c479b517413443eaf5, type: 3}
   WeaponType: 0
-  Level: 3
-  MaxLevel: 5
+  Level: 1
+  MaxLevel: 2
   BaseDamage: 100
   FireRate: 3
   ReloadTime: 0

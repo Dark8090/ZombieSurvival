@@ -15,7 +15,7 @@ MonoBehaviour:
   ID: 5
   WeaponName: big fireball
   Description: big fireball
-  Sprite: {fileID: -4320295261928297051, guid: d789efb1df7b9a9429826b9413132c2c, type: 3}
+  Sprite: {fileID: -2278566297644842510, guid: 031b502ebcd7522429792b8cd4355978, type: 3}
   WeaponPrefab: {fileID: 444433349506550737, guid: 3d2988cd05da51140a3cd97b32652eab, type: 3}
   WeaponType: 3
   Level: 1

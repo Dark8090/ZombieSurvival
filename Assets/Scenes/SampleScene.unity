@@ -5546,8 +5546,7 @@ MonoBehaviour:
   - {fileID: 8920387676493778309, guid: 041921d460f3fbf49a916b99812b9d68, type: 3}
   - {fileID: 7031587827453192717, guid: 149e0c2dbb027e644badfe74071b9cac, type: 3}
   - {fileID: 9061037243391034982, guid: 4a2d2e671c5900045b1ed8ab86b4fcf4, type: 3}
-  - {fileID: 7616053787192509084, guid: 1729021325f8800449a972125bcaf4e8, type: 3}
-  - {fileID: 7060372385132660057, guid: af51255a3f26b974792831c39021cd37, type: 3}
+  prefabsEvolutionItems: []
   slotsList: []
   slotPrefab: {fileID: 4626869775836136792, guid: 4a7bd04c31076c945864f4a49722ed4b, type: 3}
   slotPrefabParent: {fileID: 1338175015}

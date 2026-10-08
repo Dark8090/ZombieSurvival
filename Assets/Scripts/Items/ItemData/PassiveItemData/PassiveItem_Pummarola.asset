@@ -19,8 +19,8 @@ MonoBehaviour:
   ItemPrefab: {fileID: 0}
   ItemType: 0
   xdxdxdxdxd: 
-  Level: 5
-  MaxLevel: 5
+  Level: 1
+  MaxLevel: 2
   MaxHealth: 0
   RegenerationHealth: 0.2
   Armor: 0

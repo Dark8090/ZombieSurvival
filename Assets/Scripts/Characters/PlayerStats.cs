@@ -121,6 +121,7 @@ public class PlayerStats : MonoBehaviour
                 maxExperience += 50;
 
                 //GameManager.Instance.LevelUpBox.GetComponent<LevelUpSystem>().LevelUp();
+                LevelUpSystem.Instance.LevelUp();
                 GameManager.Instance.LevelUpBox.transform.GetChild(0).gameObject.SetActive(true);
             }
         }

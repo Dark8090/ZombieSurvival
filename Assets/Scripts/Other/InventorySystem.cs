@@ -103,7 +103,7 @@ public class InventorySystem : MonoBehaviour
         weaponsList.Remove(weaponBase);
         UpdateInventory();
         Destroy(deleteObject);
-        
+
     }
     public void RemovePassiveItem(PassiveItem passiveItem)
     {
@@ -117,6 +117,12 @@ public class InventorySystem : MonoBehaviour
 
     public bool HasPassiveItem(PassiveItemData passiveItemData)
     {
+        if (passiveItemData == null)
+        {
+            Debug.Log("false");
+            return false;
+        }
+
         foreach (var item in passiveItemsList)
         {
             if (item.PassiveItemData.ID == passiveItemData.ID) return true;
@@ -156,31 +162,84 @@ public class InventorySystem : MonoBehaviour
         }
     }
 
-    public void CanWeaponEvolution(WeaponBase weaponBase)
+    //public void CanWeaponEvolution(WeaponBase weaponBase)
+    //{
+    //    WeaponData weaponData = weaponBase.WeaponData;
+
+    //    if (!weaponData.CanEvolution || weaponData.RequiredPassiveItemToEvolution == null) // СПОРНЕНЬКО
+    //    {
+    //        return;
+    //    }
+
+    //    PassiveItem passiveInstanceInInventory = null;
+
+    //    foreach (var item in passiveItemsList)
+    //    {
+    //        if (item.PassiveItemData == weaponData.RequiredPassiveItemToEvolution)
+    //        {
+    //            passiveInstanceInInventory = item;
+    //            break;
+    //        }
+    //    }
+
+    //    if (passiveInstanceInInventory != null)
+    //    {
+    //        EvolutionItemSystem.Instance.EvolutionWeapon(weaponBase, passiveInstanceInInventory);
+    //    }
+
+    //}
+
+    //new1
+    //public void CanWeaponEvolution(WeaponBase weaponBase)
+    //{
+    //    if (weaponBase.WeaponData.CanEvolution || weaponBase.WeaponData.RequiredPassiveItemToEvolution == null
+    //        || weaponBase.Level < weaponBase.WeaponData.MaxLevel) // СПОРНЕНЬКО
+    //    {
+    //        return;
+    //    }
+
+    //    PassiveItem passiveItemToEvolution = null;
+
+    //    foreach (var item in passiveItemsList)
+    //    {
+    //        if (item.PassiveItemData == weaponBase.WeaponData.RequiredPassiveItemToEvolution && item.Level == item.PassiveItemData.MaxLevel)
+    //        {
+    //            passiveItemToEvolution = item;
+    //            break;
+    //        }
+    //    }
+
+    //    if (passiveItemToEvolution != null)
+    //    {
+    //        EvolutionItemSystem.Instance.EvolutionWeapon(weaponBase, passiveItemToEvolution);
+    //    }
+
+    //}
+
+    //new2 bool
+    public bool CanWeaponEvolution(WeaponBase weaponBase)
     {
-        WeaponData weaponData = weaponBase.WeaponData;
 
-        if (!weaponData.CanEvolution || weaponData.RequiredPassiveItemToEvolution == null) // СПОРНЕНЬКО
+        if (!weaponBase.WeaponData.CanEvolution || weaponBase.WeaponData.RequiredPassiveItemToEvolution == null
+            || weaponBase.Level < weaponBase.WeaponData.MaxLevel) 
         {
-            return;
+            return false;
         }
-
-        PassiveItem passiveInstanceInInventory = null;
 
         foreach (var item in passiveItemsList)
         {
-            if (item.PassiveItemData == weaponData.RequiredPassiveItemToEvolution)
+            if (item.PassiveItemData == weaponBase.WeaponData.RequiredPassiveItemToEvolution && item.Level == item.PassiveItemData.MaxLevel)
             {
-                passiveInstanceInInventory = item;
-                break;
+                Debug.Log("Вернул TRUE");
+                return true;
             }
+            
+
         }
 
-        if (passiveInstanceInInventory != null)
-        {
-            EvolutionItemSystem.Instance.EvolutionWeapon(weaponBase, passiveInstanceInInventory);
-        }
+        return false;
 
     }
+
 
 }
