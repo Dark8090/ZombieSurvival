@@ -2,9 +2,8 @@ using UnityEngine;
 
 public abstract class WeaponBase : MonoBehaviour
 {
-    public WeaponData WeaponData; 
-    private int levelBase;
-    public int Level { get => levelBase; set => levelBase = value; }
+    public WeaponData WeaponData;
+    public int Level { get; set; }
     public virtual void Attack() { }
     public virtual void Attack(Vector3 positon) { }
     public virtual float GetDamage()
@@ -16,6 +15,6 @@ public abstract class WeaponBase : MonoBehaviour
 
     protected virtual void Start()
     {
-        levelBase = WeaponData.Level;
+        Level = WeaponData.Level;
     }
 }

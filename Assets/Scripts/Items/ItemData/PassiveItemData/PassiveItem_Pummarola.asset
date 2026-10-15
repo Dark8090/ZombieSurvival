@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1325d41ad1b4f34b86d20010a4aa09f, type: 3}
   m_Name: PassiveItem_Pummarola
   m_EditorClassIdentifier: Assembly-CSharp::PassiveItemData
-  ID: 4
+  ID: 2
   Name: Pummarola
   Description: RegenHP
   Sprite: {fileID: -4885878364636539697, guid: c537d85364d1a724e9d3f69cad5f6af1, type: 3}
   ItemPrefab: {fileID: 0}
   ItemType: 0
   xdxdxdxdxd: 
-  Level: 1
-  MaxLevel: 2
+  Level: 5
+  MaxLevel: 5
   MaxHealth: 0
   RegenerationHealth: 0.2
   Armor: 0

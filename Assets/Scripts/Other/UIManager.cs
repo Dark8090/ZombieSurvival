@@ -25,6 +25,7 @@ public class UIManager : MonoBehaviour
 
                 if (newObject.TryGetComponent(out WeaponBase weapon) && InventorySystem.Instance.CanAddWeapon(weapon))
                 {
+                    Debug.Log("ыыыы");
                     InventorySystem.Instance.AddWeaponItem(weapon);
                     newObject.name = gameObject.name;
                     newObject.transform.SetParent(GameManager.Instance.WeaponItemBox.transform);

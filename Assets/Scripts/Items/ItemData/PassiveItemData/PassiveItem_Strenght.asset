@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1325d41ad1b4f34b86d20010a4aa09f, type: 3}
   m_Name: PassiveItem_Strenght
   m_EditorClassIdentifier: Assembly-CSharp::PassiveItemData
-  ID: 0
+  ID: 3
   Name: Strenght
   Description: Strenght
   Sprite: {fileID: 4769873663164824753, guid: c537d85364d1a724e9d3f69cad5f6af1, type: 3}
   ItemPrefab: {fileID: 0}
   ItemType: 0
   xdxdxdxdxd: 
+  Level: 0
+  MaxLevel: 0
   MaxHealth: 0
   RegenerationHealth: 0
   Armor: 0

@@ -15,7 +15,7 @@ MonoBehaviour:
   ID: 0
   WeaponName: Potion
   Description: Acid...
-  Sprite: {fileID: 0}
+  Sprite: {fileID: 3784591575114305020, guid: 2e853291958836245973f63cb8d08086, type: 3}
   WeaponPrefab: {fileID: 0}
   WeaponType: 0
   Level: 1
@@ -25,6 +25,9 @@ MonoBehaviour:
   ReloadTime: 0
   CriticalChance: 0
   CriticalMultiplier: 0
+  CanEvolution: 0
+  RequiredPassiveItemToEvolution: {fileID: 0}
+  EvolutionWeapon: {fileID: 0}
   AttackSound: {fileID: 0}
   HitSound: {fileID: 0}
   ReloadSound: {fileID: 0}

@@ -14,17 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MeleeWeaponData
   ID: 1
   WeaponName: Knife
-  Description: 
+  Description: dsfdsfsd
   Sprite: {fileID: 0}
   WeaponPrefab: {fileID: 0}
   WeaponType: 0
+  Level: 1
+  MaxLevel: 5
   BaseDamage: 5
   FireRate: 0
   ReloadTime: 5
   CriticalChance: 50
   CriticalMultiplier: 2
+  CanEvolution: 0
+  RequiredPassiveItemToEvolution: {fileID: 0}
+  EvolutionWeapon: {fileID: 0}
   AttackSound: {fileID: 0}
   HitSound: {fileID: 0}
   ReloadSound: {fileID: 0}
   ParticleSystem: {fileID: 0}
-  attackRange: 2
+  AttackRange: 2

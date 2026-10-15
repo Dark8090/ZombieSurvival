@@ -5,8 +5,7 @@ using UnityEngine;
 public class PassiveItem : MonoBehaviour
 {
     [SerializeField] protected PassiveItemData _passiveItemData;
-    private int level;
-    public int Level { get => level; set => level = value; }
+    public int Level { get; set; }
     public PassiveItemData PassiveItemData { get => _passiveItemData; }
 
     public virtual float GetMaxHealthBonus() => 0f;
@@ -17,9 +16,9 @@ public class PassiveItem : MonoBehaviour
 
 
 
-    protected virtual void Awake()
+    private void Start()
     {
-        level = _passiveItemData.Level;
+        Level = _passiveItemData.Level;
     }
 
     //public void AddItem()

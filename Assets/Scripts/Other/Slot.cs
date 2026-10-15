@@ -6,15 +6,22 @@ public class Slot : MonoBehaviour
     [SerializeField] private Image image;
     public bool isEmpty = true;
 
-    
+    private Sprite defaultSprite;
+
+    private void Start()
+    {
+        defaultSprite = image.sprite;
+    }
+
+
     public void SetSlot(Sprite sprite)
     {
         image.sprite = sprite;
-        isEmpty = true;
+        isEmpty = false;
     }
     public void ClearSlot()
     {
-        image.sprite = null;
-        isEmpty = false;
+        image.sprite = defaultSprite;
+        isEmpty = true;
     }
 }

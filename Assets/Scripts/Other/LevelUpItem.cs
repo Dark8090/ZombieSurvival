@@ -24,6 +24,10 @@ public class LevelUpItem : MonoBehaviour
     }
     public void ClearEventItemButton()
     {
+        if (itemButton == null)
+        {
+            Init();
+        }
         itemButton.onClick.RemoveAllListeners();
     }
     public void AddEventItemButton(UnityAction newEvent)

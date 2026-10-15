@@ -23,6 +23,10 @@ public class MeleeWeapon : WeaponBase
     [SerializeField] protected float activeDuration; // сколько секунд объект активен
     [SerializeField] protected float inactiveDuration; // сколько секунд объект неактивен между циклами
 
+    protected override void Start()
+    {
+        base.Start();
+    }
 
     //[SerializeField] private LayerMask obstacleLayerMask;
 
@@ -69,8 +73,8 @@ public class MeleeWeapon : WeaponBase
     //    GetDamage();
     //}
 
-    
-    
+
+
 }
 
 

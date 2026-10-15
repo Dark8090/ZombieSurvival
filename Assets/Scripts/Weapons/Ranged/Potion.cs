@@ -53,7 +53,7 @@ public class Potion : RangedWeapon
     private new void TryAttack()
     {
         Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, rangedWeaponData.AttackRange, targetLayer);
-        print(enemies.Length);
+        //print(enemies.Length);
         if (enemies.Length > 0 && Time.time >= NextFireTime)
         {
             print("Атакую");

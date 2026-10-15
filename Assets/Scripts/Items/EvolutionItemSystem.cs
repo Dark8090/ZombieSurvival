@@ -36,6 +36,8 @@ public class EvolutionItemSystem : MonoBehaviour
 
         GameObject gameObject = weaponBase.WeaponData.EvolutionWeapon.WeaponPrefab;
         UIManager.Instance.CreateObject(gameObject);
+        Debug.Log("Я создал объект");
+
         InventorySystem.Instance.UpdateInventory(); // Обновление Inventory
     }
 }

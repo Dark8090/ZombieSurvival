@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1325d41ad1b4f34b86d20010a4aa09f, type: 3}
   m_Name: PassiveItem_MoveSpeed
   m_EditorClassIdentifier: Assembly-CSharp::PassiveItemData
-  ID: 0
+  ID: 1
   Name: MoveSpeed
   Description: MoveSpeed
   Sprite: {fileID: 6718395737654965867, guid: c537d85364d1a724e9d3f69cad5f6af1, type: 3}
   ItemPrefab: {fileID: 0}
   ItemType: 0
   xdxdxdxdxd: 
+  Level: 0
+  MaxLevel: 0
   MaxHealth: 0
   RegenerationHealth: 0
   Armor: 0

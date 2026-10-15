@@ -152,11 +152,11 @@ public class InventorySystem : MonoBehaviour
 
 
         // Добавление
-        for (int i = 0; i < weaponSlot.Count; i++)
+        for (int i = 0; i < weaponsList.Count; i++)
         {
             weaponSlot[i].SetSlot(weaponsList[i].WeaponData.Sprite);
         }
-        for (int i = 0; i < itemsSlot.Count; i++)
+        for (int i = 0; i < passiveItemsList.Count; i++)
         {
             itemsSlot[i].SetSlot(passiveItemsList[i].PassiveItemData.Sprite);
         }

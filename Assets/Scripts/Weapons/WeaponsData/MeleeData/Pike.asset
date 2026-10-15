@@ -12,17 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30f23542d1e6ecc4ba6681eb649d9ea4, type: 3}
   m_Name: Pike
   m_EditorClassIdentifier: Assembly-CSharp::MeleeWeaponData
-  ID: 0
+  ID: 7
   WeaponName: Pike
   Description: Just pike,..
-  Sprite: {fileID: 0}
+  Sprite: {fileID: 21300000, guid: 88758486834ddd5439afe59c692789aa, type: 3}
   WeaponPrefab: {fileID: 0}
   WeaponType: 0
+  Level: 1
+  MaxLevel: 5
   BaseDamage: 100
   FireRate: 0.3
   ReloadTime: 2
   CriticalChance: 0
   CriticalMultiplier: 0
+  CanEvolution: 0
+  RequiredPassiveItemToEvolution: {fileID: 0}
+  EvolutionWeapon: {fileID: 0}
   AttackSound: {fileID: 0}
   HitSound: {fileID: 0}
   ReloadSound: {fileID: 0}

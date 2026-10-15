@@ -18,13 +18,16 @@ MonoBehaviour:
   Sprite: {fileID: -3649581771365044444, guid: 892c23f491a273d4bb9f71a1c9ccfd40, type: 3}
   WeaponPrefab: {fileID: 0}
   WeaponType: 0
-  Level: 1
+  Level: 3
   MaxLevel: 5
   BaseDamage: 9.8
   FireRate: 5
   ReloadTime: 0
   CriticalChance: 0
   CriticalMultiplier: 0
+  CanEvolution: 0
+  RequiredPassiveItemToEvolution: {fileID: 0}
+  EvolutionWeapon: {fileID: 0}
   AttackSound: {fileID: 0}
   HitSound: {fileID: 0}
   ReloadSound: {fileID: 0}
