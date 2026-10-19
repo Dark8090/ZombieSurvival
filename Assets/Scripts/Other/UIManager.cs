@@ -1,4 +1,3 @@
-using UnityEditor.Rendering;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
@@ -8,91 +7,55 @@ public class UIManager : MonoBehaviour
     [SerializeField] private SliderLevelText sliderLevel;
     [SerializeField] private MoneySystem moneySystem;
 
-
     private void Awake()
     {
         Instance = this;
     }
 
-    public void CreateObject(GameObject gameObject)
+    // Проверка выполняется один раз и по префабу, до Instantiate. Раньше проверка дублировалась
+    // до и после создания, а при неудаче в сцене оставался лишний объект.
+    // Метод возвращает true, если предмет действительно добавлен в инвентарь.
+    public bool CreateObject(GameObject prefab)
     {
-        if (gameObject != null)
+        if (prefab == null) return false;
+
+        InventorySystem inventory = InventorySystem.Instance;
+
+        if (prefab.TryGetComponent(out WeaponBase weaponPrefab))
         {
-            if (gameObject.TryGetComponent(out WeaponBase weaponBase) && InventorySystem.Instance.CanAddWeapon(weaponBase) ||
-                gameObject.TryGetComponent(out PassiveItem passiveItemBase) && InventorySystem.Instance.CanAddPassiveItem(passiveItemBase))
-            {
-                GameObject newObject = Instantiate(gameObject);
+            if (!inventory.CanAddWeapon(weaponPrefab)) return false;
 
-                if (newObject.TryGetComponent(out WeaponBase weapon) && InventorySystem.Instance.CanAddWeapon(weapon))
-                {
-                    Debug.Log("ыыыы");
-                    InventorySystem.Instance.AddWeaponItem(weapon);
-                    newObject.name = gameObject.name;
-                    newObject.transform.SetParent(GameManager.Instance.WeaponItemBox.transform);
-
-                }
-
-                else if (newObject.TryGetComponent(out PassiveItem passiveItem) && InventorySystem.Instance.CanAddPassiveItem(passiveItem))
-                {
-                    InventorySystem.Instance.AddPassiveItem(passiveItem);
-                    newObject.name = gameObject.name;
-                    newObject.transform.SetParent(GameManager.Instance.PassiveItemBox.transform);
-                }
-            }
-
+            GameObject newObject = Instantiate(prefab);
+            newObject.name = prefab.name;
+            newObject.transform.SetParent(GameManager.Instance.WeaponItemBox.transform);
+            inventory.AddWeaponItem(newObject.GetComponent<WeaponBase>());
+            return true;
         }
 
-
-        // TODO: Сделать проверку на наличие УЖЕ компонента
-
-    }
-    public void UpgradeObject(GameObject gameObject)
-    {
-        if (gameObject.TryGetComponent(out WeaponBase weapon) && InventorySystem.Instance.CanUpgradeWeaponItem(weapon))
+        if (prefab.TryGetComponent(out PassiveItem passivePrefab))
         {
-            foreach (var item in InventorySystem.Instance.WeaponsList)
-            {
-                Debug.Log($"Текущий уровень - {item.GetComponent<WeaponBase>().Level}"); 
+            if (!inventory.CanAddPassiveItem(passivePrefab)) return false;
 
-                if (item.GetComponent<WeaponBase>().Level < weapon.WeaponData.MaxLevel)
-                {
-                    item.GetComponent<WeaponBase>().Level++;
-                    Debug.Log($"Уровень повышен, текущий уровень - {item.GetComponent<WeaponBase>().Level}, максимальный уровень оружия - {weapon.WeaponData.MaxLevel}");
-                    break;
-                }
-            }
-        }
-        else if (gameObject.TryGetComponent(out PassiveItem passiveItem) && InventorySystem.Instance.CanUpgradePassiveItem(passiveItem)) 
-        {
-            foreach (var item in InventorySystem.Instance.PassiveItemsList) //TODO: Добавить Level в PassiveItemData
-            {
-
-                if (item.GetComponent<PassiveItem>().Level < passiveItem.PassiveItemData.MaxLevel)
-                {
-                    item.GetComponent<PassiveItem>().Level++;
-                    GameManager.Instance.CharacterBase.PlayerStats.RecalculateStats();
-                }
-            }
+            GameObject newObject = Instantiate(prefab);
+            newObject.name = prefab.name;
+            newObject.transform.SetParent(GameManager.Instance.PassiveItemBox.transform);
+            inventory.AddPassiveItem(newObject.GetComponent<PassiveItem>());
+            return true;
         }
 
-        
+        return false;
     }
 
-
-
+    // Метод UpgradeObject удалён: он нигде не вызывался, а улучшение теперь выполняют
+    // InventorySystem.LevelUpWeapon и InventorySystem.LevelUpPassiveItem.
 
     public void UpdateSlider(int currentExperience, int maxExperience, int level)
     {
         sliderLevel.SetSlider(currentExperience, maxExperience, level);
     }
+
     public void UpdateMoney(int count)
     {
         moneySystem.AddMoney(count);
     }
-
-    //public void TestDestroy(WeaponBase weaponBase)
-    //{
-    //    InventorySystem.Instance.RemoveWeaponItem(weaponBase);
-    //}
-
 }

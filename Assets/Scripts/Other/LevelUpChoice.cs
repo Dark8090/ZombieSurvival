@@ -1,14 +1,12 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 
+// РџРѕР»Рµ DisplayData СѓРґР°Р»РµРЅРѕ: РѕРЅРѕ РЅРёРіРґРµ РЅРµ С‡РёС‚Р°Р»РѕСЃСЊ.
 public class LevelUpChoice
 {
-    public WeaponData DisplayData;      // Что показываем на кнопке (может быть эволюционным оружием)
-    public Sprite DisplaySprite;        // Иконка для кнопки
-    public string DisplayText;          // Текст для кнопки
-    public bool IsEvolution;            // Флаг для визуального выделения
+    public Sprite DisplaySprite;
+    public string DisplayText;
+    public bool IsEvolution;
 
-    // Действие при нажатии (замыкание создается ОДИН раз с правильными данными)
     public UnityAction OnClickAction;
 }

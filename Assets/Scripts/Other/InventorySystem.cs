@@ -1,13 +1,7 @@
-using Mono.Cecil;
-using NUnit.Framework;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using UnityEngine;
 
 public class InventorySystem : MonoBehaviour
-//TODO: Сделать метод который будем перебирать имеющиеся листы с оружием и пассивными предметами для того, чтобы найти, есть ли предмет готовый 
-// к эволюции, если да, передавать в метод для Эволюции оба класса WeaponBase и PassiveItem
-
 {
     public static InventorySystem Instance;
 
@@ -21,225 +15,129 @@ public class InventorySystem : MonoBehaviour
 
     public List<PassiveItem> PassiveItemsList => passiveItemsList;
     public List<WeaponBase> WeaponsList => weaponsList;
-    private WeaponBase weaponTemp = null;
-    private PassiveItem requiredPassiveItemTemp = null;
+
+    // Свободное место определяется по количеству предметов в списке, а не по флагу Slot.isEmpty.
+    public bool HasFreeWeaponSlot => weaponsList.Count < weaponSlot.Count;
+    public bool HasFreePassiveSlot => passiveItemsList.Count < itemsSlot.Count;
 
     private void Awake()
     {
         Instance = this;
     }
-    public void AddWeaponItem(WeaponBase weaponBase)
+
+    // Поиск всегда идёт по ID. Раньше где-то сравнивались ID, а где-то ссылки на ScriptableObject.
+    public WeaponBase FindWeapon(int id)
     {
-        foreach (var item in weaponSlot)
+        foreach (var item in weaponsList)
         {
-            if (item.GetComponent<Slot>().isEmpty == true)
-            {
-                item.GetComponent<Slot>().SetSlot(weaponBase.WeaponData.Sprite);
-                item.GetComponent<Slot>().isEmpty = false;
-                weaponsList.Add(weaponBase);
-                print("Dobavil weapon");
-                return;
-            }
-            //else print($"Slot {item} zanyat");
+            if (item != null && item.WeaponData.ID == id) return item;
         }
+        return null;
     }
-    public bool CanAddPassiveItem(PassiveItem passiveItem)
+
+    public PassiveItem FindPassiveItem(int id)
     {
         foreach (var item in passiveItemsList)
         {
-            if (item.PassiveItemData.ID == passiveItem.PassiveItemData.ID) return false;
+            if (item != null && item.PassiveItemData.ID == id) return item;
         }
-
-        return true;
+        return null;
     }
+
+    // Проверка включает наличие свободного слота, поэтому отдельные проверки в UIManager больше не нужны.
     public bool CanAddWeapon(WeaponBase weapon)
     {
-        foreach (var item in weaponsList)
-        {
-            if (item.WeaponData.ID == weapon.WeaponData.ID) return false;
-        }
-
-        return true;
+        return weapon != null && HasFreeWeaponSlot && FindWeapon(weapon.WeaponData.ID) == null;
     }
+
+    public bool CanAddPassiveItem(PassiveItem passiveItem)
+    {
+        return passiveItem != null && HasFreePassiveSlot && FindPassiveItem(passiveItem.PassiveItemData.ID) == null;
+    }
+
+    public void AddWeaponItem(WeaponBase weaponBase)
+    {
+        if (!CanAddWeapon(weaponBase)) return;
+
+        weaponsList.Add(weaponBase);
+        UpdateInventory();
+    }
+
     public void AddPassiveItem(PassiveItem passiveItem)
     {
-        foreach (var item in itemsSlot)
-        {
-            if (item.GetComponent<Slot>().isEmpty == true)
-            {
-                item.GetComponent<Slot>().SetSlot(passiveItem.PassiveItemData.Sprite);
-                item.GetComponent<Slot>().isEmpty = false;
-                passiveItemsList.Add(passiveItem);
-                character.PlayerStats.RecalculateStats();
-                print("Dobavil passiveItem");
-                return;
-            }
-            //else print($"Slot {item} zanyat" );
-        }
-    }
+        if (!CanAddPassiveItem(passiveItem)) return;
 
-    public bool CanUpgradeWeaponItem(WeaponBase weapon)
-    {
-        foreach (var item in weaponsList)
-        {
-            if (item.WeaponData.ID == weapon.WeaponData.ID) return true;
-        }
-        return false;
-    }
-    public bool CanUpgradePassiveItem(PassiveItem passiveItem)
-    {
-        foreach (var item in passiveItemsList)
-        {
-            if (item.PassiveItemData.ID == passiveItem.PassiveItemData.ID) return true;
-        }
-        return false;
-    }
-
-    public void RemoveWeaponItem(WeaponBase weaponBase) //TODO: Сделать отдельный метод который будем заново перебирать Инвентарь (вызывать после Remove)
-    {
-        int weaponIndex = weaponsList.IndexOf(weaponBase);
-        weaponSlot[weaponIndex].ClearSlot();
-        GameObject deleteObject = weaponBase.gameObject;
-        weaponsList.Remove(weaponBase);
+        passiveItemsList.Add(passiveItem);
         UpdateInventory();
-        Destroy(deleteObject);
-
+        character.PlayerStats.RecalculateStats();
     }
+
+    // Повышение уровня вынесено сюда, чтобы после улучшения пассивки статы игрока пересчитывались всегда.
+    public bool LevelUpWeapon(WeaponBase weapon)
+    {
+        return weapon != null && weapon.TryLevelUp();
+    }
+
+    public bool LevelUpPassiveItem(PassiveItem passiveItem)
+    {
+        if (passiveItem == null || !passiveItem.TryLevelUp()) return false;
+
+        character.PlayerStats.RecalculateStats();
+        return true;
+    }
+
+    // Слоты всегда перерисовываются целиком по индексам списков (UpdateInventory), поэтому рассинхрона быть не может.
+    // Объект сначала отключается: Destroy срабатывает только в конце кадра, и до этого он продолжал бы работать.
+    public void RemoveWeaponItem(WeaponBase weaponBase)
+    {
+        if (!weaponsList.Remove(weaponBase)) return;
+
+        UpdateInventory();
+        weaponBase.gameObject.SetActive(false);
+        Destroy(weaponBase.gameObject);
+    }
+
     public void RemovePassiveItem(PassiveItem passiveItem)
     {
-        int passiveItemIndex = passiveItemsList.IndexOf(passiveItem);
-        itemsSlot[passiveItemIndex].ClearSlot();
-        GameObject deleteObject = passiveItem.gameObject;
-        passiveItemsList.Remove(passiveItem);
+        if (!passiveItemsList.Remove(passiveItem)) return;
+
         UpdateInventory();
-        Destroy(deleteObject);
+        character.PlayerStats.RecalculateStats();
+        passiveItem.gameObject.SetActive(false);
+        Destroy(passiveItem.gameObject);
     }
 
-    public bool HasPassiveItem(PassiveItemData passiveItemData)
+    // Возвращает пассивный предмет, необходимый для эволюции, если все условия выполнены, иначе null.
+    // Заменяет дублирующиеся проверки в CanWeaponEvolution и в LevelUpSystemNew.
+    public PassiveItem FindEvolutionPassive(WeaponBase weapon)
     {
-        if (passiveItemData == null)
-        {
-            Debug.Log("false");
-            return false;
-        }
+        WeaponData data = weapon.WeaponData;
 
-        foreach (var item in passiveItemsList)
-        {
-            if (item.PassiveItemData.ID == passiveItemData.ID) return true;
-        }
-        return false;
+        if (!data.CanEvolution || data.EvolutionWeapon == null || data.RequiredPassiveItemToEvolution == null) return null;
+        if (!weapon.IsMaxLevel) return null;
+
+        PassiveItem passive = FindPassiveItem(data.RequiredPassiveItemToEvolution.ID);
+        return passive != null && passive.IsMaxLevel ? passive : null;
     }
-
 
     public void UpdateInventory()
     {
-        // Удаление
         foreach (var item in weaponSlot)
         {
-            if (item != null)
-            {
-                item.ClearSlot();
-            }
+            if (item != null) item.ClearSlot();
         }
         foreach (var item in itemsSlot)
         {
-            if (item != null)
-            {
-                item.ClearSlot();
-            }
+            if (item != null) item.ClearSlot();
         }
 
-
-
-        // Добавление
-        for (int i = 0; i < weaponsList.Count; i++)
+        for (int i = 0; i < weaponsList.Count && i < weaponSlot.Count; i++)
         {
             weaponSlot[i].SetSlot(weaponsList[i].WeaponData.Sprite);
         }
-        for (int i = 0; i < passiveItemsList.Count; i++)
+        for (int i = 0; i < passiveItemsList.Count && i < itemsSlot.Count; i++)
         {
             itemsSlot[i].SetSlot(passiveItemsList[i].PassiveItemData.Sprite);
         }
     }
-
-    //public void CanWeaponEvolution(WeaponBase weaponBase)
-    //{
-    //    WeaponData weaponData = weaponBase.WeaponData;
-
-    //    if (!weaponData.CanEvolution || weaponData.RequiredPassiveItemToEvolution == null) // СПОРНЕНЬКО
-    //    {
-    //        return;
-    //    }
-
-    //    PassiveItem passiveInstanceInInventory = null;
-
-    //    foreach (var item in passiveItemsList)
-    //    {
-    //        if (item.PassiveItemData == weaponData.RequiredPassiveItemToEvolution)
-    //        {
-    //            passiveInstanceInInventory = item;
-    //            break;
-    //        }
-    //    }
-
-    //    if (passiveInstanceInInventory != null)
-    //    {
-    //        EvolutionItemSystem.Instance.EvolutionWeapon(weaponBase, passiveInstanceInInventory);
-    //    }
-
-    //}
-
-    //new1
-    //public void CanWeaponEvolution(WeaponBase weaponBase)
-    //{
-    //    if (weaponBase.WeaponData.CanEvolution || weaponBase.WeaponData.RequiredPassiveItemToEvolution == null
-    //        || weaponBase.Level < weaponBase.WeaponData.MaxLevel) // СПОРНЕНЬКО
-    //    {
-    //        return;
-    //    }
-
-    //    PassiveItem passiveItemToEvolution = null;
-
-    //    foreach (var item in passiveItemsList)
-    //    {
-    //        if (item.PassiveItemData == weaponBase.WeaponData.RequiredPassiveItemToEvolution && item.Level == item.PassiveItemData.MaxLevel)
-    //        {
-    //            passiveItemToEvolution = item;
-    //            break;
-    //        }
-    //    }
-
-    //    if (passiveItemToEvolution != null)
-    //    {
-    //        EvolutionItemSystem.Instance.EvolutionWeapon(weaponBase, passiveItemToEvolution);
-    //    }
-
-    //}
-
-    //new2 bool
-    public bool CanWeaponEvolution(WeaponBase weaponBase)
-    {
-
-        if (!weaponBase.WeaponData.CanEvolution || weaponBase.WeaponData.RequiredPassiveItemToEvolution == null
-            || weaponBase.Level < weaponBase.WeaponData.MaxLevel) 
-        {
-            return false;
-        }
-
-        foreach (var item in passiveItemsList)
-        {
-            if (item.PassiveItemData == weaponBase.WeaponData.RequiredPassiveItemToEvolution && item.Level == item.PassiveItemData.MaxLevel)
-            {
-                Debug.Log("Вернул TRUE");
-                return true;
-            }
-            
-
-        }
-
-        return false;
-
-    }
-
-
 }

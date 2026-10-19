@@ -3,41 +3,33 @@ using UnityEngine;
 public class EvolutionItemSystem : MonoBehaviour
 {
     public static EvolutionItemSystem Instance;
+
     private void Awake()
     {
         Instance = this;
     }
-    //public void EvolutionWeapon(WeaponBase weaponBase, PassiveItem requiredPassiveItem) // 1 - Оружие для Эволюции, 2 - требуемый пассивный предмет для эволюции оружия
-    //{
-    //    if (weaponBase == null || requiredPassiveItem == null || !weaponBase.WeaponData.CanEvolution) return;
-    //    if (weaponBase.Level != weaponBase.WeaponData.MaxLevel || requiredPassiveItem.Level != requiredPassiveItem.PassiveItemData.MaxLevel) return;
-    //    if (InventorySystem.Instance.HasPassiveItem(weaponBase.WeaponData.RequiredPassiveItemToEvolution))
-    //    {
-    //        InventorySystem.Instance.RemoveWeaponItem(weaponBase);
-    //        InventorySystem.Instance.RemovePassiveItem(requiredPassiveItem);
 
-    //        // заменил на метод из UIManager
-    //        //GameObject gameObject = Instantiate(evolvingWeapon.WeaponData.EvolutionWeapon.WeaponPrefab, GameManager.Instance.WeaponItemBox.transform); 
-    //        //gameObject.name = evolvingWeapon.WeaponData.EvolutionWeapon.WeaponName;
-    //        //InventorySystem.Instance.AddWeaponItem(gameObject.GetComponent<WeaponBase>()); 
-
-    //        GameObject gameObject = weaponBase.WeaponData.EvolutionWeapon.WeaponPrefab;
-    //        UIManager.Instance.CreateObject(gameObject);
-    //        //UIManager.Instance.UpdateInventory(); // Обновление UI
-
-
-    //    }
-    //}
-    //NEW
-    public void EvolutionWeapon(WeaponBase weaponBase, PassiveItem requiredPassiveItem) // 1 - Оружие для Эволюции, 2 - требуемый пассивный предмет для эволюции оружия
+    public void EvolutionWeapon(WeaponBase weaponBase, PassiveItem requiredPassiveItem)
     {
+        WeaponData data = weaponBase.WeaponData;
+        if (data.EvolutionWeapon == null || data.EvolutionWeapon.WeaponPrefab == null) return;
+
+        // Всё нужное читаем до удаления оружия, чтобы не обращаться к объекту, который уничтожается.
+        GameObject evolvedPrefab = data.EvolutionWeapon.WeaponPrefab;
+        bool consumePassive = data.ConsumePassiveItemOnEvolution;
+
+        // Если эволюционное оружие уже есть в инвентаре, эволюция отменяется, иначе исходное оружие пропало бы зря.
+        if (!evolvedPrefab.TryGetComponent(out WeaponBase evolvedWeapon)) return;
+        if (InventorySystem.Instance.FindWeapon(evolvedWeapon.WeaponData.ID) != null) return;
+
         InventorySystem.Instance.RemoveWeaponItem(weaponBase);
-        InventorySystem.Instance.RemovePassiveItem(requiredPassiveItem);
 
-        GameObject gameObject = weaponBase.WeaponData.EvolutionWeapon.WeaponPrefab;
-        UIManager.Instance.CreateObject(gameObject);
-        Debug.Log("Я создал объект");
+        // Пассивный предмет теперь удаляется только если это включено в данных оружия.
+        if (consumePassive && requiredPassiveItem != null)
+        {
+            InventorySystem.Instance.RemovePassiveItem(requiredPassiveItem);
+        }
 
-        InventorySystem.Instance.UpdateInventory(); // Обновление Inventory
+        UIManager.Instance.CreateObject(evolvedPrefab);
     }
 }

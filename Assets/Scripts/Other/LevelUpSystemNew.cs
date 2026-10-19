@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class LevelUpSystemNew : MonoBehaviour
 {
@@ -14,11 +15,12 @@ public class LevelUpSystemNew : MonoBehaviour
     [SerializeField] private List<GameObject> allWeaponPrefabs;
     [SerializeField] private List<GameObject> allPassivePrefabs;
 
+    // Лечение предлагается, когда не осталось ни одного варианта прокачки.
+    [Header("Fallback")]
+    [SerializeField] private float fallbackHealAmount = 30f;
+
     private void Awake() => Instance = this;
 
-    /// <summary>
-    /// Вызывается при повышении уровня игрока
-    /// </summary>
     public void ShowLevelUpScreen()
     {
         List<LevelUpChoice> choices = GenerateChoices(3);
@@ -28,208 +30,198 @@ public class LevelUpSystemNew : MonoBehaviour
         Time.timeScale = 0f;
     }
 
-    /// <summary>
-    /// Генерирует список из N вариантов выбора (Эволюции -> Улучшения/Новые предметы)
-    /// </summary>
+    // Цикл while (choices.Count < count) удалён: при нехватке вариантов он зависал навсегда.
+    // Теперь собирается конечный список кандидатов, он перемешивается, и из него берутся первые N.
     private List<LevelUpChoice> GenerateChoices(int count)
     {
         List<LevelUpChoice> choices = new List<LevelUpChoice>();
-        List<WeaponBase> inventoryWeapons = InventorySystem.Instance.WeaponsList;
-        List<PassiveItem> inventoryPassives = InventorySystem.Instance.PassiveItemsList;
 
-        // ==========================================
-        // ЭТАП 1: Поиск доступных эволюций
-        // ==========================================
-        for (int i = 0; i < inventoryWeapons.Count && choices.Count < count; i++)
+        AddEvolutionChoices(choices, count);
+
+        if (choices.Count < count)
         {
-            WeaponBase wb = inventoryWeapons[i];
-            WeaponData data = wb.WeaponData;
-
-            if (!data.CanEvolution || data.EvolutionWeapon == null || data.RequiredPassiveItemToEvolution == null)
-                continue;
-
-            // Проверка макс. уровня оружия
-            if (wb.Level < data.MaxLevel)
-                continue;
-
-            // Поиск требуемого пассивного предмета в инвентаре
-            PassiveItem requiredPassive = null;
-            for (int j = 0; j < inventoryPassives.Count; j++)
-            {
-                PassiveItem pi = inventoryPassives[j];
-                if (pi.PassiveItemData == data.RequiredPassiveItemToEvolution &&
-                    pi.Level >= pi.PassiveItemData.MaxLevel)
-                {
-                    requiredPassive = pi;
-                    break;
-                }
-            }
-
-            // Если условия выполнены - добавляем эволюцию
-            if (requiredPassive != null)
-            {
-                LevelUpChoice choice = new LevelUpChoice();
-                choice.DisplayData = data.EvolutionWeapon;
-                choice.DisplaySprite = data.EvolutionWeapon.Sprite;
-                choice.DisplayText = $"{data.EvolutionWeapon.WeaponName}\n✨ ЭВОЛЮЦИЯ!";
-                choice.IsEvolution = true;
-
-                // Замыкание захватывает конкретные экземпляры из инвентаря
-                choice.OnClickAction = () =>
-                {
-                    EvolutionItemSystem.Instance.EvolutionWeapon(wb, requiredPassive);
-                    CloseLevelUp();
-                };
-
-                choices.Add(choice);
-            }
+            AddRegularChoices(choices, count);
         }
 
-        // ==========================================
-        // ЭТАП 2: Добиваем улучшениями или новыми предметами
-        // ==========================================
-
-        
-        while (choices.Count < count)
+        // Если вариантов нет совсем, игрок не должен застрять на паузе с пустым экраном.
+        if (choices.Count == 0)
         {
-            LevelUpChoice choice = null;
-
-            // Случайный выбор типа награды (50/50)
-            bool offerWeapon = Random.value > 0.5f;
-
-            if (offerWeapon && allWeaponPrefabs.Count > 0)
-            {
-                GameObject randomPrefab = allWeaponPrefabs[Random.Range(0, allWeaponPrefabs.Count)];
-
-                if (randomPrefab.TryGetComponent(out WeaponBase weaponBase))
-                {
-                    // Ищем экземпляр этого оружия в инвентаре
-                    WeaponBase existingWeapon = null;
-                    for (int k = 0; k < inventoryWeapons.Count; k++)
-                    {
-                        if (inventoryWeapons[k].WeaponData.ID == weaponBase.WeaponData.ID)
-                        {
-                            existingWeapon = inventoryWeapons[k];
-                            break;
-                        }
-                    }
-
-                    choice = new LevelUpChoice();
-                    choice.DisplayData = weaponBase.WeaponData;
-                    choice.DisplaySprite = weaponBase.WeaponData.Sprite;
-
-                    if (existingWeapon != null)
-                    {
-                        // Оружие уже есть -> Улучшение
-                        choice.DisplayText = $"{weaponBase.WeaponData.WeaponName}\n(Ур. +1)";
-                        choice.IsEvolution = false;
-
-                        choice.OnClickAction = () =>
-                        {
-                            existingWeapon.Level++;
-                            Debug.Log($"Оружие {existingWeapon.WeaponData.WeaponName} улучшено до уровня {existingWeapon.Level}");
-                            CloseLevelUp();
-                        };
-                    }
-                    else
-                    {
-                        // Оружия нет -> Новое оружие
-                        choice.DisplayText = $"{weaponBase.WeaponData.WeaponName}\n(Новое!)";
-                        choice.IsEvolution = false;
-
-                        choice.OnClickAction = () =>
-                        {
-                            UIManager.Instance.CreateObject(randomPrefab);
-                            CloseLevelUp();
-                        };
-                    }
-                }
-            }
-            else if (!offerWeapon && allPassivePrefabs.Count > 0)
-            {
-                GameObject randomPrefab = allPassivePrefabs[Random.Range(0, allPassivePrefabs.Count)];
-
-                if (randomPrefab.TryGetComponent(out PassiveItem passiveComponent))
-                {
-                    PassiveItemData passiveData = passiveComponent.PassiveItemData;
-
-                    // Ищем экземпляр предмета в инвентаре
-                    PassiveItem existingPassive = null;
-                    for (int k = 0; k < inventoryPassives.Count; k++)
-                    {
-                        if (inventoryPassives[k].PassiveItemData.ID == passiveData.ID)
-                        {
-                            existingPassive = inventoryPassives[k];
-                            break;
-                        }
-                    }
-
-                    choice = new LevelUpChoice();
-                    choice.DisplaySprite = passiveData.Sprite;
-
-                    if (existingPassive != null)
-                    {
-                        // Предмет уже есть -> Улучшение
-                        choice.DisplayText = $"{passiveData.Name}\n(Ур. +1)";
-                        choice.IsEvolution = false;
-
-                        choice.OnClickAction = () =>
-                        {
-                            existingPassive.Level++;
-                            Debug.Log($"Предмет {passiveData.Name} улучшен до уровня {existingPassive.Level}");
-                            CloseLevelUp();
-                        };
-                    }
-                    else
-                    {
-                        // Предмета нет -> Новый предмет
-                        choice.DisplayText = $"{passiveData.Name}\n(Новый!)";
-                        choice.IsEvolution = false;
-
-                        choice.OnClickAction = () =>
-                        {
-                            UIManager.Instance.CreateObject(randomPrefab);
-                            CloseLevelUp();
-                        };
-                    }
-                }
-            }
-
-            // Добавляем только если успешно создан и не является дубликатом
-            if (choice != null)
-            {
-                bool isDuplicate = false;
-                for (int m = 0; m < choices.Count; m++)
-                {
-                    if (choices[m].DisplayText == choice.DisplayText)
-                    {
-                        isDuplicate = true;
-                        break;
-                    }
-                }
-
-                if (!isDuplicate)
-                {
-                    choices.Add(choice);
-                }
-            }
+            choices.Add(CreateFallbackChoice());
         }
 
         return choices;
     }
 
-    /// <summary>
-    /// Создает UI кнопки на основе готового списка выборов
-    /// </summary>
+    private void AddEvolutionChoices(List<LevelUpChoice> choices, int count)
+    {
+        InventorySystem inventory = InventorySystem.Instance;
+
+        foreach (WeaponBase weapon in inventory.WeaponsList)
+        {
+            if (choices.Count >= count) break;
+
+            // Все условия эволюции (уровни, нужный предмет, сравнение по ID) проверяются в одном месте.
+            PassiveItem requiredPassive = inventory.FindEvolutionPassive(weapon);
+            if (requiredPassive == null) continue;
+
+            WeaponData evolved = weapon.WeaponData.EvolutionWeapon;
+            if (evolved.WeaponPrefab == null || inventory.FindWeapon(evolved.ID) != null) continue;
+
+            WeaponBase weaponToEvolve = weapon;
+            choices.Add(CreateChoice(
+                evolved.Sprite,
+                $"{evolved.WeaponName}\n✨ ЭВОЛЮЦИЯ!",
+                true,
+                () =>
+                {
+                    EvolutionItemSystem.Instance.EvolutionWeapon(weaponToEvolve, requiredPassive);
+                    CloseLevelUp();
+                }));
+        }
+    }
+
+    private void AddRegularChoices(List<LevelUpChoice> choices, int count)
+    {
+        InventorySystem inventory = InventorySystem.Instance;
+        List<LevelUpChoice> candidates = new List<LevelUpChoice>();
+
+        // Результаты эволюции нельзя получить как обычное новое оружие, только через эволюцию.
+        HashSet<int> evolutionResultIds = new HashSet<int>();
+        foreach (GameObject prefab in allWeaponPrefabs)
+        {
+            if (prefab != null && prefab.TryGetComponent(out WeaponBase weaponPrefab) && weaponPrefab.WeaponData.EvolutionWeapon != null)
+            {
+                evolutionResultIds.Add(weaponPrefab.WeaponData.EvolutionWeapon.ID);
+            }
+        }
+
+        // Дубликаты отсекаются по ID предмета, а не по тексту кнопки.
+        HashSet<int> usedWeaponIds = new HashSet<int>();
+        foreach (GameObject prefab in allWeaponPrefabs)
+        {
+            if (prefab == null || !prefab.TryGetComponent(out WeaponBase weaponPrefab)) continue;
+
+            WeaponData data = weaponPrefab.WeaponData;
+            if (!usedWeaponIds.Add(data.ID)) continue;
+
+            WeaponBase existing = inventory.FindWeapon(data.ID);
+            GameObject weaponGameObject = prefab;
+
+            if (existing != null)
+            {
+                // Улучшение предлагается только пока не достигнут MaxLevel.
+                if (existing.IsMaxLevel) continue;
+
+                candidates.Add(CreateChoice(
+                    data.Sprite,
+                    $"{data.WeaponName}\n(Ур. +1)",
+                    false,
+                    () =>
+                    {
+                        inventory.LevelUpWeapon(existing);
+                        CloseLevelUp();
+                    }));
+            }
+            // Новое оружие предлагается только при наличии свободного слота.
+            else if (inventory.HasFreeWeaponSlot && !evolutionResultIds.Contains(data.ID))
+            {
+                candidates.Add(CreateChoice(
+                    data.Sprite,
+                    $"{data.WeaponName}\n(Новое!)",
+                    false,
+                    () =>
+                    {
+                        UIManager.Instance.CreateObject(weaponGameObject);
+                        CloseLevelUp();
+                    }));
+            }
+        }
+
+        HashSet<int> usedPassiveIds = new HashSet<int>();
+        foreach (GameObject prefab in allPassivePrefabs)
+        {
+            if (prefab == null || !prefab.TryGetComponent(out PassiveItem passivePrefab)) continue;
+
+            PassiveItemData data = passivePrefab.PassiveItemData;
+            if (!usedPassiveIds.Add(data.ID)) continue;
+
+            PassiveItem existing = inventory.FindPassiveItem(data.ID);
+            GameObject passiveGameObject = prefab;
+
+            if (existing != null)
+            {
+                if (existing.IsMaxLevel) continue;
+
+                // LevelUpPassiveItem сам пересчитывает статы игрока после повышения уровня.
+                candidates.Add(CreateChoice(
+                    data.Sprite,
+                    $"{data.Name}\n(Ур. +1)",
+                    false,
+                    () =>
+                    {
+                        inventory.LevelUpPassiveItem(existing);
+                        CloseLevelUp();
+                    }));
+            }
+            else if (inventory.HasFreePassiveSlot)
+            {
+                candidates.Add(CreateChoice(
+                    data.Sprite,
+                    $"{data.Name}\n(Новый!)",
+                    false,
+                    () =>
+                    {
+                        UIManager.Instance.CreateObject(passiveGameObject);
+                        CloseLevelUp();
+                    }));
+            }
+        }
+
+        // Перемешивание (Фишер-Йетс), затем добор до нужного количества.
+        for (int i = candidates.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            (candidates[i], candidates[j]) = (candidates[j], candidates[i]);
+        }
+
+        for (int i = 0; i < candidates.Count && choices.Count < count; i++)
+        {
+            choices.Add(candidates[i]);
+        }
+    }
+
+    private LevelUpChoice CreateFallbackChoice()
+    {
+        return CreateChoice(
+            null,
+            $"Восстановить здоровье\n(+{fallbackHealAmount})",
+            false,
+            () =>
+            {
+                GameManager.Instance.PlayerStats.Heal(fallbackHealAmount);
+                CloseLevelUp();
+            });
+    }
+
+    // Общий метод создания варианта: убирает повторяющийся код заполнения LevelUpChoice.
+    private static LevelUpChoice CreateChoice(Sprite sprite, string text, bool isEvolution, UnityAction onClick)
+    {
+        return new LevelUpChoice
+        {
+            DisplaySprite = sprite,
+            DisplayText = text,
+            IsEvolution = isEvolution,
+            OnClickAction = onClick
+        };
+    }
+
     private void CreateButtons(List<LevelUpChoice> choices)
     {
-        // Очищаем старые кнопки
         for (int i = buttonsContainer.childCount - 1; i >= 0; i--)
         {
             Destroy(buttonsContainer.GetChild(i).gameObject);
         }
 
-        // Создаем новые кнопки
         for (int i = 0; i < choices.Count; i++)
         {
             LevelUpChoice choice = choices[i];
@@ -239,9 +231,8 @@ public class LevelUpSystemNew : MonoBehaviour
             uiItem.SetItemImage(choice.DisplaySprite);
             uiItem.SetItemText(choice.DisplayText);
 
-            // Привязываем действие (оно уже содержит все нужные данные)
             uiItem.ClearEventItemButton();
-            uiItem.AddEventItemButton(choice.OnClickAction); //раскоментить
+            uiItem.AddEventItemButton(choice.OnClickAction);
         }
     }
 

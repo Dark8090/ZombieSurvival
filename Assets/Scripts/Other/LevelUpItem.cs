@@ -9,7 +9,8 @@ public class LevelUpItem : MonoBehaviour
 
     private Button itemButton;
 
-    public void Init()
+    // Кнопка кэшируется в Awake. Публичный Init и ленивая инициализация удалены.
+    private void Awake()
     {
         itemButton = GetComponent<Button>();
     }
@@ -18,20 +19,20 @@ public class LevelUpItem : MonoBehaviour
     {
         itemImage.sprite = sprite;
     }
+
     public void SetItemText(string text)
     {
         itemText.text = text;
     }
+
     public void ClearEventItemButton()
     {
-        if (itemButton == null)
-        {
-            Init();
-        }
         itemButton.onClick.RemoveAllListeners();
     }
+
+    // Действие подписывается напрямую, без лишней обёртки newEvent.Invoke.
     public void AddEventItemButton(UnityAction newEvent)
     {
-        itemButton.onClick.AddListener(newEvent.Invoke);
+        itemButton.onClick.AddListener(newEvent);
     }
 }
